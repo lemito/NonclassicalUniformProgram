@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Нечёткие величины U(a,b)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Нечёткие величины на основе равномерного закона U(a, b)</h1>
+  <p class="sub">μ(x) = F(x) = (x − a)/(b − a) на [a, b]; α-срез: [A, B] = [a + α(b − a), b]</p>
+  <nav id="tabs">
+    <button data-tab="gen" class="active">Генерация</button>
+    <button data-tab="sel">Отбор</button>
+    <button data-tab="clu">Кластеризация</button>
+    <button data-tab="ops">Операции</button>
+    <button data-tab="log">Журнал</button>
+  </nav>
+</header>
+
+<main>
+  <div id="status" class="status"></div>
+
+  <section id="gen" class="tab active">
+    <div class="panel">
+      <h2>Генерация набора</h2>
+      <form id="genForm" class="grid">
+        <label>Количество N
+          <select name="n"><option>50</option><option selected>100</option><option>300</option></select>
+        </label>
+        <label>Seed <input name="seed" type="number" value="2026" min="0" step="1"></label>
+        <label>a от <input name="lo" type="number" value="0" step="any"></label>
+        <label>a до <input name="hi" type="number" value="100" step="any"></label>
+        <label>ширина b−a от <input name="wmin" type="number" value="5" step="any"></label>
+        <label>ширина b−a до <input name="wmax" type="number" value="30" step="any"></label>
+        <label>Порог α <input name="alpha" type="number" value="0.7" min="0" max="1" step="0.05"></label>
+        <div class="actions"><button type="submit" class="primary">Сгенерировать</button></div>
+      </form>
+    </div>
+    <div class="panel">
+      <h2>Ввод и вывод</h2>
+      <form id="addForm" class="row">
+        <label>a <input name="a" type="number" step="any" required></label>
+        <label>b <input name="b" type="number" step="any" required></label>
+        <div class="actions">
+          <button type="submit">Добавить величину</button>
+          <button type="button" id="clearBtn">Очистить набор</button>
+        </div>
+      </form>
+      <div class="row">
+        <label class="file">Импорт CSV (a,b) <input id="importFile" type="file" accept=".csv,.txt"></label>
+        <a href="/api/export" class="button">Экспорт CSV</a>
+        <label>Порог α <input id="alphaInput" type="number" value="0.7" min="0" max="1" step="0.05"></label>
+        <button type="button" id="alphaBtn">Пересчитать срезы</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Функции принадлежности μ(x) и уровень α</h2>
+      <canvas id="curvesGen" height="360"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Отрезки [A, B] (упорядочены по A)</h2>
+      <canvas id="intervalsGen" height="320"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Таблица величин <span id="genCount" class="muted"></span></h2>
+      <div class="table-wrap"><table id="itemsTable"></table></div>
+    </div>
+  </section>
+
+  <section id="sel" class="tab">
+    <div class="panel">
+      <h2>Отбор отрезков по критерию</h2>
+      <form id="selForm" class="grid">
+        <label>Критерий
+          <select name="criterion">
+            <option value="none">Без отбора (все)</option>
+            <option value="width" selected>Длина B − A в диапазоне [p1, p2]</option>
+            <option value="window">Отрезок внутри окна [p1, p2]</option>
+          </select>
+        </label>
+        <label>p1 <input name="p1" type="number" value="3" step="any"></label>
+        <label>p2 <input name="p2" type="number" value="8" step="any"></label>
+        <div class="actions"><button type="submit" class="primary">Отобрать</button></div>
+      </form>
+      <p id="selInfo" class="muted"></p>
+    </div>
+    <div class="panel">
+      <h2>Отрезки: отобранные выделены цветом</h2>
+      <canvas id="intervalsSel" height="360"></canvas>
+    </div>
+  </section>
+
+  <section id="clu" class="tab">
+    <div class="panel">
+      <h2>Кластерный анализ отобранных отрезков</h2>
+      <form id="cluForm" class="grid">
+        <label>Метод
+          <select name="method">
+            <option value="kmeans">k-means++ (заданное число кластеров)</option>
+            <option value="threshold">Пороговый (критерий: расстояние &lt; δ)</option>
+          </select>
+        </label>
+        <label>k <input name="k" type="number" value="4" min="1" step="1"></label>
+        <label>δ <input name="delta" type="number" value="10" min="0" step="any"></label>
+        <label>Seed <input name="seed" type="number" value="1" min="0" step="1"></label>
+        <div class="actions"><button type="submit" class="primary">Кластеризовать</button></div>
+      </form>
+      <p class="muted">Расстояние между отрезками — Хаусдорфа: d = max(|A₁ − A₂|, |B₁ − B₂|).</p>
+    </div>
+    <div class="panel">
+      <h2>Кластеры</h2>
+      <div class="table-wrap"><table id="clusterTable"></table></div>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <h2>Плоскость (A, B)</h2>
+        <canvas id="scatterClu" height="360"></canvas>
+      </div>
+      <div class="panel">
+        <h2>Отрезки по кластерам</h2>
+        <canvas id="intervalsClu" height="360"></canvas>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Функции принадлежности, окрашенные по кластерам</h2>
+      <canvas id="curvesClu" height="320"></canvas>
+    </div>
+  </section>
+
+  <section id="ops" class="tab">
+    <div class="panel">
+      <h2>Операции над нечёткими величинами</h2>
+      <form id="opsForm" class="grid">
+        <label>X: a <input name="xa" type="number" value="2" step="any"></label>
+        <label>X: b <input name="xb" type="number" value="6" step="any"></label>
+        <label>Y: a <input name="ya" type="number" value="4" step="any"></label>
+        <label>Y: b <input name="yb" type="number" value="7" step="any"></label>
+        <label>Операция
+          <select name="op">
+            <option value="add">X + Y</option>
+            <option value="sub">X − Y</option>
+            <option value="mul">X × Y</option>
+            <option value="div">X ÷ Y</option>
+          </select>
+        </label>
+        <label>α <input name="alpha" type="number" value="0.7" min="0" max="1" step="0.05"></label>
+        <div class="actions"><button type="submit" class="primary">Вычислить</button></div>
+      </form>
+      <div class="row">
+        <label>X из набора № <input id="pickX" type="number" min="0" step="1"></label>
+        <label>Y из набора № <input id="pickY" type="number" min="0" step="1"></label>
+        <button type="button" id="pickBtn">Подставить</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Графики</h2>
+      <canvas id="opsCanvas" height="380"></canvas>
+      <div id="opsLegend" class="legend"></div>
+    </div>
+    <div class="panel">
+      <h2>Результат</h2>
+      <div id="opsResult"></div>
+    </div>
+  </section>
+
+  <section id="log" class="tab">
+    <div class="panel">
+      <h2>Журнал работы (fuzzy.log)</h2>
+      <div class="row"><button type="button" id="logBtn">Обновить</button></div>
+      <pre id="logText"></pre>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
