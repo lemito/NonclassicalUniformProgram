@@ -1,0 +1,27 @@
+\documentclass[a4paper,12pt]{article}
+\AtBeginDocument{\fontsize{14pt}{21pt}\selectfont}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\newfontfamily\cyrillicfont{Times New Roman}
+\newfontfamily\englishfont{Times New Roman}
+\newfontfamily\cyrillicfonttt{Times New Roman}
+\usepackage{polyglossia}\setdefaultlanguage{russian}\setotherlanguage{english}
+\usepackage[left=30mm,right=15mm,top=20mm,bottom=20mm]{geometry}
+\usepackage{setspace}\onehalfspacing
+\usepackage{indentfirst}\setlength{\parindent}{1.25cm}\setlength{\parskip}{0pt}
+\usepackage{graphicx,amsmath,amssymb,booktabs,array,longtable,caption}
+\usepackage[hidelinks]{hyperref}
+\usepackage[backend=biber,style=gost-numeric,sorting=none,language=auto]{biblatex}\addbibresource{refs.bib}
+\usepackage{titlesec}\titleformat{\section}{\centering\normalfont\bfseries\Large}{\thesection.}{0.5em}{}\titlespacing*{\section}{0pt}{0pt}{12pt}\titleformat{\subsection}{\normalfont\bfseries\large}{\thesubsection.}{0.5em}{}\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\captionsetup{font=normalsize,labelfont=normalfont,justification=centering}
+\begin{document}
+\begin{titlepage}\thispagestyle{empty}\begin{center}\bfseries Московский авиационный институт\\Институт компьютерных наук (Институт №8)\vfill\Large ОТЧЕТ ПО КУРСОВОМУ ПРОЕКТУ\par\vspace{8mm}\normalsize\textbf{«Нечеткие величины на основе равномерного закона U(a,b): генерация, операции над α-срезами и кластеризация»}\vfill\begin{flushleft}\normalfont Дисциплина: «Неклассические логики»\\Руководитель: Д. В. Кубраков, преподаватель ОЦ-8\\Студент: \rule{6cm}{0.4pt}\quad Группа: \rule{2.5cm}{0.4pt}\end{flushleft}\vfill Москва, 2026\end{center}\end{titlepage}
+\setcounter{page}{2}\tableofcontents\clearpage
+\section*{Введение}\addcontentsline{toc}{section}{Введение}\input{parts/intro}\clearpage
+\section{Глава 1. Введение и постановка задачи}\input{parts/chapter1}\clearpage
+\section{Глава 2. Теоретические и алгоритмические основы}\input{parts/chapter2}\clearpage
+\section{Глава 3. Архитектура и программная реализация}\input{parts/chapter3}\clearpage
+\section{Глава 4. Экспериментальное исследование и результаты}\input{parts/chapter4}\clearpage
+\section*{Заключение}\addcontentsline{toc}{section}{Заключение}\input{parts/conclusion}\clearpage
+\nocite{batyrshin2007,demidova,abchuk1979,zadeh1965,arthur2007,blackman2021}\printbibliography[title={Список использованных источников}]\addcontentsline{toc}{section}{Список использованных источников}
+\end{document}
