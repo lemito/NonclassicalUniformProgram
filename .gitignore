@@ -71,5 +71,18 @@ Testing/
 /bin/
 fuzzy.log
 
+# LaTeX report build output
+report_tex/*.aux
+report_tex/*.bbl
+report_tex/*.bcf
+report_tex/*.blg
+report_tex/*.fdb_latexmk
+report_tex/*.fls
+report_tex/*.log
+report_tex/*.out
+report_tex/*.pdf
+report_tex/*.run.xml
+report_tex/*.toc
+
 /third_party/
 !/Makefile
